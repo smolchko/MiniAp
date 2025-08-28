@@ -1,1 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 Заказы для курьеров</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .order {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .order-header {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #2b6cb0;
+            text-align: center;
+        }
+        .order-detail {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📦 Доступные заказы</h2>
+        <div id="orders-list">
+            <p>Загрузка заказов...</p>
+        </div>
+    </div>
 
+    <script>
+        // Функция для принятия заказа
+        function acceptOrder(orderId) {
+            const data = {
+                action: 'accept_order',
+                order_id: orderId
+            };
+            
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                Telegram.WebApp.sendData(JSON.stringify(data));
+                setTimeout(() => Telegram.WebApp.close(), 1000);
+            } else {
+                alert('Заказ #' + orderId + ' принят!');
+            }
+        }
+
+        // Функция для загрузки заказов
+        function loadOrders() {
+            // Здесь будет загрузка заказов через API
+            // Покажем пример заказов
+            const orders = [
+                {
+                    id: 1,
+                    address: "ул. Примерная, 1",
+                    customer: "Иван Иванов", 
+                    phone: "+79123456789"
+                },
+                {
+                    id: 2,
+                    address: "ул. Тестовая, 5",
+                    customer: "Петр Петров",
+                    phone: "+79876543210"
+                }
+            ];
+
+            let html = '';
+            orders.forEach(order => {
+                html += `
+                <div class="order">
+                    <div class="order-header">Заказ #${order.id}</div>
+                    <div class="order-detail">📍 Адрес: ${order.address}</div>
+                    <div class="order-detail">👤 Клиент: ${order.customer}</div>
+                    <div class="order-detail">📞 Телефон: ${order.phone}</div>
+                    <button class="button" onclick="acceptOrder(${order.id})">✅ Принять заказ</button>
+                </div>`;
+            });
+
+            document.getElementById('orders-list').innerHTML = html;
+        }
+
+        // Инициализация Telegram Web App
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+            Telegram.WebApp.enableClosingConfirmation();
+        }
+
+        // Загружаем заказы при запуске
+        loadOrders();
+    </script>
+</body>
+</html>
